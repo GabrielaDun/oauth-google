@@ -2,8 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const hbs = require('express-handlebars');
+const passport = require('passport');
+const passportConfig = require('./config/passport.js')
+const session = require('express-session'); // object that is going to be send in a callback
 
 const app = express();
+
+
+app.use(session({ secret: '@NyTh!!!!!nG#' }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.engine('hbs', hbs({ extname: 'hbs', layoutsDir: './layouts', defaultLayout: 'main' }));
 app.set('view engine', '.hbs');
@@ -16,6 +24,15 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.get('/', (req, res) => {
   res.render('index');
 });
+
+app.get('/auth/google', 
+    passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/user/no-permission' }),
+  (req, res) => {
+    res.redirect('/user/logged');
+  }
+);
 
 app.get('/user/logged', (req, res) => {
   res.render('logged');
