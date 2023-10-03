@@ -6,7 +6,9 @@ const passport = require('passport');
 const passportConfig = require('./config/passport.js')
 const session = require('express-session'); // object that is going to be send in a callback
 
+
 const app = express();
+
 
 
 app.use(session({ secret: '@NyTh!!!!!nG#' }));
@@ -25,22 +27,8 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/auth/google', 
-    passport.authenticate('google', { scope: ['email', 'profile'] }));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/user/no-permission' }),
-  (req, res) => {
-    res.redirect('/user/logged');
-  }
-);
-
-app.get('/user/logged', (req, res) => {
-  res.render('logged');
-});
-
-app.get('/user/no-permission', (req, res) => {
-  res.render('noPermission');
-});
+app.use('/auth', require('./routes/auth.routes'));
+app.use('/user', require('./routes/user.routes'));
 
 app.use('/', (req, res) => {
   res.status(404).render('notFound');
