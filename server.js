@@ -9,8 +9,6 @@ const session = require('express-session'); // object that is going to be send i
 
 const app = express();
 
-
-
 app.use(session({ secret: '@NyTh!!!!!nG#' }));
 app.use(passport.initialize());
 app.use(passport.session());
